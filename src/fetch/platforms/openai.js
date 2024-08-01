@@ -60,7 +60,7 @@ export class ChatGPTApi {
 
     const modelConfig = {
       ...useConfig().modelConfig,
-      ...useChatStore().currentSession().modelConfig,
+      ...useChatStore().currentSession.modelConfig,
       ...{
         model: options.config.model,
         providerName: options.config.providerName,
@@ -113,6 +113,7 @@ export class ChatGPTApi {
       // } else {
       // chatPath = this.path(OpenaiPath.ChatPath);
       chatPath = "api/openai";
+      // chatPath = "http://localhost:3055/stream";
       // }
       const chatPayload = {
         method: "POST",
@@ -168,7 +169,7 @@ export class ChatGPTApi {
           async onopen(res) {
             clearTimeout(requestTimeoutId);
             const contentType = res.headers.get("content-type");
-            console.log("[OpenAI] request response content type: ", contentType, res);
+            console.log("[OpenAI] request response content type: ", contentType);
 
             if (contentType?.startsWith("text/plain")) {
               responseText = await res.clone().text();
@@ -176,6 +177,7 @@ export class ChatGPTApi {
             }
 
             if (!res.ok || !res.headers.get("content-type")?.startsWith(EventStreamContentType) || res.status !== 200) {
+              console.log(222);
               const responseTexts = [responseText];
               let extraInfo = await res.clone().text();
               try {
@@ -197,7 +199,6 @@ export class ChatGPTApi {
             }
           },
           onmessage(msg) {
-            console.log(msg, "msg");
             if (msg.data === "[DONE]" || finished) {
               return finish();
             }
@@ -220,7 +221,7 @@ export class ChatGPTApi {
                 );
               }
             } catch (e) {
-              console.error("[Request] parse error", text, msg);
+              // console.error("[Request] parse error", text, msg);
             }
           },
           onclose() {

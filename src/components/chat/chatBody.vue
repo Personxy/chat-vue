@@ -91,17 +91,16 @@ const emit = defineEmits();
 const onTouchStart = (e) => {
   emit("bodyClick");
 };
-const session = useChatStore().currentSession();
-console.log(session, "session");
+const session = computed(() => useChatStore().currentSession);
+
 const config = useConfig();
 const isLoading = ref(false);
 const context = ref([]);
 const isMobileScreen = useMobileScreen();
 const renderMessages = computed(() => {
-  console.log(config, "config");
   const messages = [
     // ...context.value,
-    ...session.messages,
+    ...session.value.messages,
     ...(isLoading.value
       ? [
           {
@@ -132,7 +131,7 @@ const renderMessages = computed(() => {
     //     }]
     //   : [])
   ];
-  console.log(messages, "messages");
+
   return messages;
 });
 const msgRenderIndex = ref(Math.max(0, renderMessages.length - CHAT_PAGE_SIZE));

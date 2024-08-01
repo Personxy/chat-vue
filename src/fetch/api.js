@@ -21,7 +21,7 @@ export function getHeaders() {
   // const chatStore = useChatStore.getState();
   const headers = {
     "Content-Type": "application/json",
-    Accept: "application/json",
+    // Accept: "application/json",
   };
 
   // const clientConfig = getClientConfig();

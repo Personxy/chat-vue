@@ -112,33 +112,13 @@ function getCurrentModel() {
 const chatStore = useChatStore();
 const userInput = computed({
   get() {
-    return chatStore.currentSession().currentUserInput;
+    return chatStore.currentSession.currentUserInput;
   },
   set(value) {
     chatStore.setCurrentUserInput(value);
   },
 });
-const fetchStream = async () => {
-  const response = await fetch("api/openai", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ prompt: "Hello, how are you?" }),
-  });
 
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      break;
-    }
-    const chunk = decoder.decode(value, { stream: true });
-    console.log(chunk);
-  }
-};
 const doSubmit = () => {
   if (userInput.value.trim() === "") return;
 

@@ -7,45 +7,17 @@ import { getMessageTextContent, trimTopic } from "@/utils/index";
 import { getClientApi } from "@/fetch/api";
 import { ChatControllerPool } from "@/fetch/controller";
 import { prettyObject } from "@/utils/index";
+import { showToast } from "@/components/ui/totast/showToast";
 const DEFAULT_TOPIC = "新的聊天";
-
-function createEmptySession() {
-  const config = useConfig();
-  const message = createMessage({
-    role: "assistant",
-    content: "有什么可以帮你的吗",
-  });
-  return {
-    id: nanoid(),
-    topic: DEFAULT_TOPIC,
-    memoryPrompt: "",
-    messages: [message],
-    stat: {
-      tokenCount: 0,
-      wordCount: 0,
-      charCount: 0,
-    },
-    lastUpdate: Date.now(),
-    lastSummarizeIndex: 0,
-    currentUserInput: "",
-    currentSessionModel: "gpt-3.5-turbo",
-    modelConfig: config.modelConfig,
-    // mask: createEmptyMask(),
-  };
-}
-
-const DEFAULT_CHAT_STATE = {
-  sessions: [createEmptySession()],
-  currentSessionIndex: 0,
-};
 
 export const useChatStore = defineStore("chatStore", {
   state: () => {
     return {
-      ...DEFAULT_CHAT_STATE,
+      sessions: [],
+      currentSessionIndex: 0,
     };
   },
-  actions: {
+  getters: {
     currentSession() {
       let index = this.currentSessionIndex;
       const sessions = this.sessions;
@@ -54,17 +26,48 @@ export const useChatStore = defineStore("chatStore", {
         this.currentSessionIndex = index;
       }
       const session = sessions[index];
+      console.log(session, "sessionstore");
       return session;
     },
+  },
+  actions: {
+    init() {
+      this.sessions = [this.createEmptySession()];
+    },
+
+    createEmptySession() {
+      const config = useConfig();
+      const message = createMessage({
+        role: "assistant",
+        content: "有什么可以帮你的吗",
+      });
+      return {
+        id: nanoid(),
+        topic: DEFAULT_TOPIC,
+        memoryPrompt: "",
+        messages: [message],
+        stat: {
+          tokenCount: 0,
+          wordCount: 0,
+          charCount: 0,
+        },
+        lastUpdate: Date.now(),
+        lastSummarizeIndex: 0,
+        currentUserInput: "",
+        currentSessionModel: "gpt-3.5-turbo",
+        modelConfig: config.modelConfig,
+        // mask: createEmptyMask(),
+      };
+    },
     setCurrentUserInput(value) {
-      this.currentSession().currentUserInput = value;
+      this.currentSession.currentUserInput = value;
     },
     fillTemplateWith(input, modelConfig) {
       return input;
     },
 
     getMemoryPrompt() {
-      const session = this.currentSession();
+      const session = this.currentSession;
 
       if (session.memoryPrompt.length) {
         return {
@@ -75,7 +78,7 @@ export const useChatStore = defineStore("chatStore", {
       }
     },
     getMessagesWithMemory() {
-      const session = this.currentSession();
+      const session = this.currentSession;
       const modelConfig = session.modelConfig;
       const clearContextIndex = session.clearContextIndex ?? 0;
       const messages = session.messages.slice();
@@ -163,11 +166,58 @@ export const useChatStore = defineStore("chatStore", {
       const index = this.currentSessionIndex;
       updater(sessions[index]);
     },
+    newSession() {
+      const session = this.createEmptySession();
+      this.currentSessionIndex = 0;
+      this.sessions = [session].concat(this.sessions);
+      console.log(this.sessions, "state");
+    },
+    selectSession(index) {
+      this.currentSessionIndex = index;
+    },
+    deleteSession(index) {
+      const deletingLastSession = this.sessions.length === 1;
+      const deletedSession = this.sessions[index];
+
+      if (!deletedSession) return;
+
+      const sessions = this.sessions.slice();
+      sessions.splice(index, 1);
+
+      const currentIndex = this.currentSessionIndex;
+      let nextIndex = Math.min(currentIndex - Number(index < currentIndex), sessions.length - 1);
+
+      if (deletingLastSession) {
+        nextIndex = 0;
+        sessions.push(this.createEmptySession());
+      }
+
+      // for undo delete action
+      const restoreState = {
+        currentSessionIndex: this.currentSessionIndex,
+        sessions: this.sessions.slice(),
+      };
+      this.currentSessionIndex = nextIndex;
+      this.sessions = sessions;
+
+      let that = this;
+      showToast(
+        "已经删除会话",
+        {
+          text: "撤销",
+          onClick() {
+            that.currentSessionIndex = restoreState.currentSessionIndex;
+            that.sessions = restoreState.sessions;
+          },
+        },
+        5000
+      );
+    },
     sendMessage(content, attachImages) {
       const that = this;
-      const session = this.currentSession();
+      const session = this.currentSession;
       const modelConfig = session.modelConfig;
-
+      this.setCurrentUserInput("");
       const userContent = this.fillTemplateWith(content, modelConfig);
       console.log("[User Input] after template: ", userContent);
 
@@ -203,7 +253,7 @@ export const useChatStore = defineStore("chatStore", {
       });
       const recentMessages = this.getMessagesWithMemory();
       const sendMessages = recentMessages.concat(userMessage);
-      const messageIndex = this.currentSession().messages.length + 1;
+      const messageIndex = this.currentSession.messages.length + 1;
       this.updateCurrentSession((session) => {
         const savedUserMessage = {
           ...userMessage,
@@ -262,11 +312,11 @@ export const useChatStore = defineStore("chatStore", {
         session.lastUpdate = Date.now();
       });
       // this.updateStat(message);
-      // this.summarizeSession();
+      this.summarizeSession();
     },
     summarizeSession() {
       const config = useConfig();
-      const session = this.currentSession();
+      const session = this.currentSession;
       const modelConfig = session.modelConfig;
       const that = this;
       const api = getClientApi(modelConfig.providerName);
@@ -292,7 +342,7 @@ export const useChatStore = defineStore("chatStore", {
           messages: topicMessages,
           config: {
             model: this.getSummarizeModel(session.modelConfig.model),
-            stream: false,
+            stream: true,
           },
           onFinish(message) {
             that.updateCurrentSession(

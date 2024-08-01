@@ -1,7 +1,9 @@
 export const CHAT_PAGE_SIZE = 15;
 export const DEFAULT_SIDEBAR_WIDTH = 300;
 export const SUMMARIZE_MODEL = "gpt-3.5-turbo";
-
+export const OWNER = "Personxy";
+export const REPO = "chat-vue";
+export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
 export const REQUEST_TIMEOUT_MS = 60000;
 const openaiModels = [
   "gpt-3.5-turbo",

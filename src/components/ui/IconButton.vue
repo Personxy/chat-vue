@@ -7,7 +7,7 @@
     role="button"
     :tabindex="tabIndex"
     :autofocus="autoFocus">
-    <div v-if="icon" :class="iconClass">
+    <div :class="iconClass">
       <slot name="icon"></slot>
     </div>
     <div v-if="text" class="icon-button-text">{{ text }}</div>

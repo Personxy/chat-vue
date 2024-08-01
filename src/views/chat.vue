@@ -2,8 +2,8 @@
   <div class="chat">
     <div class="window-header">
       <div class="window-header-title">
-        <div class="window-header-main-title">test</div>
-        <div class="window-header-sub-title">共 2 条对话</div>
+        <div class="window-header-main-title">{{ currentSession.topic }}</div>
+        <div class="window-header-sub-title">共{{ currentSession.messages.length }} 条对话</div>
       </div>
     </div>
     <chatBody @bodyClick="bodyClick" />
@@ -12,9 +12,15 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import chatBody from "@/components/chat/chatBody.vue";
 import chatInputPanel from "@/components/chat/chatInputPanel.vue";
+import { useChatStore } from "@/stores/chat";
+
+const chatStore = useChatStore();
+if (chatStore.sessions.length === 0) {
+  chatStore.init();
+}
+const currentSession = computed(() => chatStore.currentSession);
 const bodyClick = () => {};
 </script>
 
