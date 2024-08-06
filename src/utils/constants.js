@@ -5,7 +5,7 @@ export const OWNER = "Personxy";
 export const REPO = "chat-vue";
 export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
 export const REQUEST_TIMEOUT_MS = 60000;
-const openaiModels = [
+export const openaiModels = [
   "gpt-3.5-turbo",
   "gpt-3.5-turbo-1106",
   "gpt-3.5-turbo-0125",

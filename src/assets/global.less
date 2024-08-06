@@ -12,8 +12,8 @@
   --theme-color: var(--gray);
 
   /* shadow */
-  --shadow: 50px 50px 100px 10px rgb(0, 0, 0, 0.1);
-  --card-shadow: 0px 2px 4px 0px rgb(0, 0, 0, 0.05);
+  --shadow: 50px 50px 100px 10px rgb(0 0 0 / 10%);
+  --card-shadow: 0px 2px 4px 0px rgb(0 0 0 / 5%);
 
   /* stroke */
   --border-in-light: 1px solid rgb(222, 222, 222);
@@ -52,8 +52,7 @@
 .mask {
   filter: invert(0.8);
 }
-
-:root {
+html {
   .light();
 
   --window-width: 90vw;
@@ -61,7 +60,7 @@
   --sidebar-width: 300px;
   --window-content-width: calc(100% - var(--sidebar-width));
   --message-max-width: 80%;
-  --full-height: 100%;
+  --full-height: 100vh;
 }
 
 @media only screen and (max-width: 600px) {

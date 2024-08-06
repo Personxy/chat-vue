@@ -68,11 +68,16 @@ const newChat = () => {
 </script>
 
 <style scoped lang="less">
-@import "../assets/global.less";
 @import "../assets/layout.less";
 .sidebar-tail {
   display: flex;
   justify-content: space-between;
   padding-top: 20px;
+  .sidebar-actions {
+    display: flex;
+    .sidebar-action:not(:last-child) {
+      margin-right: 15px;
+    }
+  }
 }
 </style>

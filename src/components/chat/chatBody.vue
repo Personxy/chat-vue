@@ -135,7 +135,7 @@ const renderMessages = computed(() => {
   return messages;
 });
 const msgRenderIndex = ref(Math.max(0, renderMessages.length - CHAT_PAGE_SIZE));
-console.log(msgRenderIndex.value, "msgRenderIndex");
+
 const messages = computed(() => {
   const endRenderIndex = Math.min(msgRenderIndex + 3 * CHAT_PAGE_SIZE, renderMessages.length);
 
@@ -272,13 +272,13 @@ const onRightClick = (e, message) => {};
 
 .chat-message-item {
 }
-:deep(.github-markdown-body) {
+:deep(.vuepress-markdown-body) {
   box-sizing: border-box;
   max-width: 100%;
-  margin-top: 10px;
+  //margin-top: 10px;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.05);
-  padding: 10px;
+  padding: 10px !important;
   font-size: 14px;
   user-select: text;
   word-break: break-word;
@@ -286,14 +286,14 @@ const onRightClick = (e, message) => {};
   position: relative;
   transition: all ease 0.3s;
 }
-:deep(.github-markdown-body blockquote),
-:deep(.github-markdown-body details),
-:deep(.github-markdown-body dl),
-:deep(.github-markdown-body ol),
-:deep(.github-markdown-body p),
-:deep(.github-markdown-body pre),
-:deep(.github-markdown-body table),
-:deep(.github-markdown-body ul) {
+:deep(.vuepress-markdown-body blockquote),
+:deep(.vuepress-markdown-body details),
+:deep(.vuepress-markdown-body dl),
+:deep(.vuepress-markdown-body ol),
+:deep(.vuepress-markdown-body p),
+:deep(.vuepress-markdown-body pre),
+:deep(.vuepress-markdown-body table),
+:deep(.vuepress-markdown-body ul) {
   margin-bottom: 0 !important;
 }
 .chat-message-item-image {

@@ -6,7 +6,7 @@
     @dblclick.capture="$emit('dblclickcapture')"
     dir="auto">
     <img src="@/icons/loading.svg" style="width: 16px; height: 16px" v-if="loading" />
-    <v-md-preview v-else :text="escapedContent" />
+    <VMdPreview :text="escapedContent" @copy-code-success="handleCopyCodeSuccess" />
   </div>
 </template>
 
@@ -16,19 +16,16 @@ import VMdPreview from "@kangc/v-md-editor/lib/preview";
 import "@kangc/v-md-editor/lib/style/preview.css";
 import githubTheme from "@kangc/v-md-editor/lib/theme/github.js";
 import "@kangc/v-md-editor/lib/theme/style/github.css";
-import createKatexPlugin from "@kangc/v-md-editor/lib/plugins/katex/cdn";
-import createMermaidPlugin from "@kangc/v-md-editor/lib/plugins/mermaid/cdn";
-import createHighlightLinesPlugin from "@kangc/v-md-editor/lib/plugins/highlight-lines/index";
-import createCopyCodePlugin from "@kangc/v-md-editor/lib/plugins/copy-code/index";
+// highlightjs
 import hljs from "highlight.js";
-VMdPreview.use(githubTheme, {
-  Hljs: hljs,
+import Prism from "prismjs";
+import createCopyCodePlugin from "@kangc/v-md-editor/lib/plugins/copy-code/index";
+import vuepressTheme from "@kangc/v-md-editor/lib/theme/vuepress.js";
+import "@kangc/v-md-editor/lib/theme/style/vuepress.css";
+VMdPreview.use(vuepressTheme, {
+  Prism,
+  // Hljs: hljs,
 });
-// .use(createKatexPlugin())
-// .use(createMermaidPlugin())
-// .use(createHighlightLinesPlugin())
-// .use(createCopyCodePlugin());
-
 export default {
   name: "MarkdownEditor",
   components: {
@@ -55,6 +52,9 @@ export default {
       return text.replace(/\$(?=\d)/g, "\\$");
     }
 
+    const handleCopyCodeSuccess = () => {
+      console.log(1);
+    };
     function escapeBrackets(text) {
       const pattern = /(```[\s\S]*?```|`.*?`)|\\\[([\s\S]*?[^\\])\\\]|\\\((.*?)\\\)/g;
       return text.replace(pattern, (match, codeBlock, squareBracket, roundBracket) => {
@@ -72,7 +72,20 @@ export default {
     return {
       markdownContent,
       escapedContent,
+      handleCopyCodeSuccess,
     };
   },
 };
 </script>
+
+<style lang="less">
+.v-md-pre-wrapper {
+  .v-md-copy-code-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    z-index: 999;
+  }
+}
+</style>

@@ -26,7 +26,7 @@ export const useChatStore = defineStore("chatStore", {
         this.currentSessionIndex = index;
       }
       const session = sessions[index];
-      console.log(session, "sessionstore");
+
       return session;
     },
   },
@@ -72,7 +72,7 @@ export const useChatStore = defineStore("chatStore", {
       if (session.memoryPrompt.length) {
         return {
           role: "system",
-          content: (content) => "这是历史聊天总结作为前情提要：" + content,
+          content: "这是历史聊天总结作为前情提要：" + session.memoryPrompt,
           date: "",
         };
       }

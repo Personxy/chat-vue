@@ -29,6 +29,11 @@ const width = ref({ full: 16, icon: 16 });
 function getWidth(dom) {
   return dom.getBoundingClientRect().width;
 }
+const handleClick = () => {
+  if (props.onClick) {
+    props.onClick();
+  }
+};
 
 function updateWidth() {
   if (!textRef.value) return;

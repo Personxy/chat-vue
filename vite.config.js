@@ -6,6 +6,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+import prismjs from "vite-plugin-prismjs";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -19,6 +20,9 @@ export default defineConfig({
     Components({
       resolvers: [ElementPlusResolver()],
     }),
+    prismjs({
+      languages: "all",
+    }),
   ],
   resolve: {
     alias: {
@@ -28,7 +32,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:3001", // 你的 API 服务器地址
+        target: "http://localhost:3000", // 你的 API 服务器地址
         changeOrigin: true,
         rewrite: (path) => path,
       },

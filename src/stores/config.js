@@ -13,12 +13,17 @@ export const Theme = {
   Dark: "dark",
   Light: "light",
 };
+export const themeMaping = {
+  auto: "自动主题",
+  light: "亮色模式",
+  dark: "深色模式",
+};
 export const DEFAULT_CONFIG = {
   lastUpdate: Date.now(), // timestamp, to merge state
   submitKey: SubmitKey.Enter,
   avatar: "1f603",
   fontSize: 14,
-  theme: Theme.Auto,
+  theme: Theme.Light,
   // tightBorder: !!config?.isApp,
   sendPreviewBubble: true,
   enableAutoGenerateTitle: true,
@@ -44,11 +49,22 @@ export const DEFAULT_CONFIG = {
     // template: config?.template ?? DEFAULT_INPUT_TEMPLATE,
   },
 };
-export const useConfig = defineStore("config", {
+export const useConfig = defineStore("configStore", {
   state: () => {
     return {
       ...DEFAULT_CONFIG,
     };
   },
-  actions: {},
+  actions: {
+    init() {
+      const savedState = localStorage.getItem("configStore");
+      if (savedState) {
+        Object.assign(this, JSON.parse(savedState));
+      } else {
+        localStorage.setItem("configStore", JSON.stringify(this.$state));
+      }
+      console.log(this);
+    },
+  },
+  persist: true,
 });

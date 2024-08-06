@@ -1,3 +1,5 @@
+import heic2any from "heic2any";
+
 export function getMessageImages(message) {
   if (typeof message.content === "string") {
     return [];
@@ -62,4 +64,61 @@ export function prettyObject(msg) {
 
   // 返回格式化后的 JSON 字符串，包含代码块标记
   return ["```json", msg, "```"].join("\n");
+}
+
+export function getCSSVar(varName) {
+  return getComputedStyle(document.body).getPropertyValue(varName).trim();
+}
+
+export function compressImage(file, maxSize) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const image = new Image();
+      image.onload = () => {
+        let canvas = document.createElement("canvas");
+        let ctx = canvas.getContext("2d");
+        let width = image.width;
+        let height = image.height;
+        let quality = 0.9;
+        let dataUrl;
+
+        do {
+          canvas.width = width;
+          canvas.height = height;
+          ctx?.clearRect(0, 0, canvas.width, canvas.height);
+          ctx?.drawImage(image, 0, 0, width, height);
+          dataUrl = canvas.toDataURL("image/jpeg", quality);
+
+          if (dataUrl.length < maxSize) break;
+
+          if (quality > 0.5) {
+            // Prioritize quality reduction
+            quality -= 0.1;
+          } else {
+            // Then reduce the size
+            width *= 0.9;
+            height *= 0.9;
+          }
+        } while (dataUrl.length > maxSize);
+
+        resolve(dataUrl);
+      };
+      image.onerror = reject;
+      image.src = readerEvent.target.result;
+    };
+    reader.onerror = reject;
+
+    if (file.type.includes("heic")) {
+      heic2any({ blob: file, toType: "image/jpeg" })
+        .then((blob) => {
+          reader.readAsDataURL(blob);
+        })
+        .catch((e) => {
+          reject(e);
+        });
+    }
+
+    reader.readAsDataURL(file);
+  });
 }
