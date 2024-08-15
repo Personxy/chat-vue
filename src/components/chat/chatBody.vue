@@ -138,10 +138,23 @@ const msgRenderIndex = ref(Math.max(0, renderMessages.length - CHAT_PAGE_SIZE));
 
 const messages = computed(() => {
   const endRenderIndex = Math.min(msgRenderIndex + 3 * CHAT_PAGE_SIZE, renderMessages.length);
-
   return renderMessages.value.slice();
 });
-const onRightClick = (e, message) => {};
+const scrollRef = ref(null);
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (scrollRef.value) {
+      requestAnimationFrame(() => {
+        scrollRef.value.scrollTop = scrollRef.value.scrollHeight;
+      });
+    }
+  });
+};
+
+watch(messages, scrollToBottom, { immediate: true });
+onMounted(() => {
+  scrollToBottom();
+});
 </script>
 
 <style scoped lang="less">

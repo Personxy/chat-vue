@@ -112,7 +112,7 @@ export class ChatGPTApi {
       //   );
       // } else {
       // chatPath = this.path(OpenaiPath.ChatPath);
-      chatPath = "api/openai";
+      chatPath = "/api/openai";
       // chatPath = "http://localhost:3055/stream";
       // }
       const chatPayload = {
@@ -163,7 +163,7 @@ export class ChatGPTApi {
         };
 
         controller.signal.onabort = finish;
-
+        console.log("[chatpath]", chatPath);
         fetchEventSource(chatPath, {
           ...chatPayload,
           async onopen(res) {
@@ -177,7 +177,6 @@ export class ChatGPTApi {
             }
 
             if (!res.ok || !res.headers.get("content-type")?.startsWith(EventStreamContentType) || res.status !== 200) {
-              console.log(222);
               const responseTexts = [responseText];
               let extraInfo = await res.clone().text();
               try {

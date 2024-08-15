@@ -20,7 +20,7 @@
             />
           </div> -->
           <div class="sidebar-action">
-            <RouterLink to="/settings">
+            <RouterLink to="/app/setting">
               <IconButton :shadow="true">
                 <template #icon>
                   <Setting />

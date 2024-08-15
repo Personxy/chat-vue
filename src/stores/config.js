@@ -9,7 +9,7 @@ export const SubmitKey = {
   MetaEnter: "Meta + Enter",
 };
 export const Theme = {
-  Auto: "auto",
+  // Auto: "auto",
   Dark: "dark",
   Light: "light",
 };

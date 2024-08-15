@@ -2,7 +2,7 @@
   <div class="chat-list">
     <div
       class="chat-item"
-      :class="route.path === '/chat' && chatStore.currentSessionIndex == index ? 'chat-item-selected' : ''"
+      :class="route.path === '/app/chat' && chatStore.currentSessionIndex == index ? 'chat-item-selected' : ''"
       @click="itemClick(index)"
       v-for="(item, index) in chatStore.sessions"
       :key="item.id">
@@ -39,7 +39,7 @@ const deleteItem = (index) => {
   chatStore.deleteSession(index);
 };
 const itemClick = (index) => {
-  router.push({ path: "/chat" });
+  router.push({ name: "chat" });
   chatStore.selectSession(index);
 };
 </script>

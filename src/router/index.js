@@ -5,22 +5,27 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: "/",
+      redirect: "/app/chat",
+    },
+    {
       path: "/auth",
       name: "auth",
       component: () => import("../views/authPage.vue"),
     },
     {
-      path: "/",
+      path: "/app",
       component: layout,
-      redirect: "/chat",
+      redirect: "/app/chat",
+      name: "app",
       children: [
         {
-          path: "/chat",
+          path: "/app/chat",
           name: "chat",
           component: () => import("../views/chat.vue"),
         },
         {
-          path: "/setting",
+          path: "/app/setting",
           name: "setting",
           component: () => import("../views/setting.vue"),
         },

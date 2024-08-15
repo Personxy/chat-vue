@@ -26,6 +26,7 @@ const bodyClick = () => {};
 
 <style scoped lang="less">
 @import "../assets/windows.less";
+
 .chat {
   display: flex;
   flex-direction: column;

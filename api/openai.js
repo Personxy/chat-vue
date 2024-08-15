@@ -1,19 +1,16 @@
 import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
-
-const openaiApiKey = process.env.VITE_OPENAI_API_KEY;
-console.log(openaiApiKey, "openaiApiKey");
-// export const config = {
-//   runtime: "edge",
-// };
 //vercel 必须设置为强制使用stream流才能用stream
 export const config = {
   supportsResponseStreaming: true,
 };
 
 export default (req, res) => {
-  // const openaiApiKey = process.env.VITE_OPENAI_API_KEY;
+  const openaiApiKey = process.env.VITE_OPENAI_API_KEY || null;
+  if (!openaiApiKey) {
+    res.send("未配置key");
+  }
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
     controller.abort();
@@ -47,13 +44,13 @@ export default (req, res) => {
           .read()
           .then(({ done, value }) => {
             if (done) {
+              console.log("end");
               res.write("event: end\n");
               res.end();
               return;
             }
 
             const chunk = decoder.decode(value, { stream: true });
-            console.log(chunk, "chunk");
             res.write(chunk);
             push(); // Read the next chunk
           })

@@ -22,6 +22,8 @@ npm install
 npm run dev
 ```
 
+vercel dev
+
 ### Compile and Minify for Production
 
 ```sh
